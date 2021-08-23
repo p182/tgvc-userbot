@@ -51,36 +51,31 @@ USERBOT_HELP = f"""{emoji.LABEL}  **Common Commands**:
 __available to group members of current voice chat__
 __starts with / (slash) or ! (exclamation mark)__
 
-\u2022 **/play**  reply with an audio to play/queue it, or show playlist
+\u2022 **/plae**  reply with an audio to play/queue it, or show playlist
 
-\u2022 **/playfrom [username/id] ; [n]**  plays the last n songs from that channel/group
-EX - `/playfrom @username ; 50` [plays last 50 songs]
+\u2022 **/plaefrom [username/id] ; [n]**  plays the last n songs from that channel/group
+EX - `/plaefrom @username ; 50` [plays last 50 songs]
 `/playfrom @username`  [plays last 10 songs, Default Limit = 10]     
 
-\u2022 **/current**  show current playing time of current track
-\u2022 **/repo**  show git repository of the userbot
-\u2022 `!help`  show help for commands
+\u2022 **/curremt**  show current playing time of current track
+\u2022 `!hemlp`  show help for commands
 
 
 {emoji.LABEL}  **Admin Commands**:
 __available to userbot account itself and its contacts__
 __starts with ! (exclamation mark)__
-\u2022 `!skip` [n] ...  skip current or n where n >= 2
-\u2022 `!join`  join voice chat of current group
-\u2022 `!leave`  leave current voice chat
-\u2022 `!vc`  check which VC is joined
-\u2022 `!stop`  stop playing
-\u2022 `!replay`  play from the beginning
-\u2022 `!clean`  remove unused RAW PCM files
-\u2022 `!pause` pause playing
-\u2022 `!resume` resume playing
-\u2022 `!mute`  mute the VC userbot
-\u2022 `!unmute`  unmute the VC userbot
+\u2022 `!skep` [n] ...  skip current or n where n >= 2
+\u2022 `!joim`  join voice chat of current group
+\u2022 `!leab`  leave current voice chat
+\u2022 `!bc`  check which VC is joined
+\u2022 `!stap`  stop playing
+\u2022 `!replae`  play from the beginning
+\u2022 `!clin`  remove unused RAW PCM files
+\u2022 `!puase` pause playing
+\u2022 `!ruseme` resume playing
+\u2022 `!mut`  mute the VC userbot
+\u2022 `!unmut`  unmute the VC userbot
 """
-
-USERBOT_REPO = f"""{emoji.ROBOT} **Telegram Voice Chat UserBot**
-- Repository: [GitHub](https://github.com/me-piro-786/tgvc-userbot)
-- License: AGPL-3.0-or-later"""
 
 # - Pyrogram filters
 
@@ -148,16 +143,6 @@ mp = MusicPlayer()
 # - pytgcalls handlers
 
 
-@mp.group_call.on_network_status_changed
-async def network_status_changed_handler(gc: GroupCall, is_connected: bool):
-    if is_connected:
-        mp.chat_id = int("-100" + str(gc.full_chat.id))
-        await send_text(f"{emoji.CHECK_MARK_BUTTON} joined the voice chat")
-    else:
-        await send_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat")
-        mp.chat_id = None
-
-
 @mp.group_call.on_playout_ended
 async def playout_ended_handler(_, __):
     await skip_current_playing()
@@ -170,7 +155,7 @@ async def playout_ended_handler(_, __):
     filters.group
     & ~filters.edited
     & current_vc
-    & (filters.regex("^(\\/|!)play$") | filters.audio)
+    & (filters.regex("^(\\/|!)plae$") | filters.audio)
 )
 async def play_track(client, m: Message):
     group_call = mp.group_call
@@ -209,7 +194,7 @@ async def play_track(client, m: Message):
     playlist.append(m_audio)
     if len(playlist) == 1:
         m_status = await m.reply_text(
-            f"{emoji.INBOX_TRAY} downloading and transcoding..."
+            f"{emoji.INBOX_TRAY} downloading..."
         )
         await download_audio(playlist[0])
         group_call.input_filename = os.path.join(
@@ -230,7 +215,7 @@ async def play_track(client, m: Message):
     filters.group
     & ~filters.edited
     & current_vc
-    & (filters.regex("^(\\/|!)playfrom"))
+    & (filters.regex("^(\\/|!)plaefrom"))
 )
 async def dest_track(client, m: Message):
     group_call = mp.group_call
@@ -291,7 +276,7 @@ async def dest_track(client, m: Message):
 
 @Client.on_message(main_filter
                    & current_vc
-                   & filters.regex("^(\\/|!)current$"))
+                   & filters.regex("^(\\/|!)curremt$"))
 async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
@@ -312,15 +297,15 @@ async def show_current_playing_time(_, m: Message):
 
 @Client.on_message(main_filter
                    & (self_or_contact_filter | current_vc)
-                   & filters.regex("^(\\/|!)help$"))
+                   & filters.regex("^(\\/|!)hemlp$"))
 async def show_help(_, m: Message):
-    await m.reply_text(f'[Click Here for Help!](https://telegra.ph/TGVC-UserBot-Help-08-17)', disable_web_page_preview=True)
+    await m.reply_text(f'[Click Here for Help!](https://telegra.ph/TgVc-cmds-08-23)', disable_web_page_preview=True)
 
 
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.command("skip", prefixes="!"))
+                   & filters.command("skep", prefixes="!"))
 async def skip_track(_, m: Message):
     playlist = mp.playlist
     if len(m.command) == 1:
@@ -351,7 +336,7 @@ async def skip_track(_, m: Message):
 
 @Client.on_message(main_filter
                    & self_or_contact_filter
-                   & filters.regex("^!join$"))
+                   & filters.regex("^!joim$"))
 async def join_group_call(client, m: Message):
     group_call = mp.group_call
     group_call.client = client
@@ -365,7 +350,7 @@ async def join_group_call(client, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!leave$"))
+                   & filters.regex("^!leab$"))
 async def leave_voice_chat(_, m: Message):
     group_call = mp.group_call
     mp.playlist.clear()
@@ -376,7 +361,7 @@ async def leave_voice_chat(_, m: Message):
 
 @Client.on_message(main_filter
                    & self_or_contact_filter
-                   & filters.regex("^!vc$"))
+                   & filters.regex("^!bc$"))
 async def list_voice_chat(client, m: Message):
     group_call = mp.group_call
     if group_call.is_connected:
@@ -408,7 +393,7 @@ async def stop_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!replay$"))
+                   & filters.regex("^!replae$"))
 async def restart_playing(_, m: Message):
     group_call = mp.group_call
     if not mp.playlist:
@@ -425,7 +410,7 @@ async def restart_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!pause"))
+                   & filters.regex("^!puase"))
 async def pause_playing(_, m: Message):
     mp.group_call.pause_playout()
     await mp.update_start_time(reset=True)
@@ -438,7 +423,7 @@ async def pause_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!resume"))
+                   & filters.regex("^!ruseme"))
 async def resume_playing(_, m: Message):
     mp.group_call.resume_playout()
     reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} resumed",
@@ -473,7 +458,7 @@ async def clean_raw_pcm(client, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!mute$"))
+                   & filters.regex("^!mut$"))
 async def mute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(True)
@@ -484,26 +469,12 @@ async def mute(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!unmute$"))
+                   & filters.regex("^!unmut$"))
 async def unmute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(False)
     reply = await m.reply_text(f"{emoji.SPEAKER_MEDIUM_VOLUME} unmuted")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
-
-
-@Client.on_message(main_filter
-                   & current_vc
-                   & filters.regex("^(\\/|!)repo$"))
-async def show_repository(_, m: Message):
-    if mp.msg.get('repo') is not None:
-        await mp.msg['repo'].delete()
-    mp.msg['repo'] = await m.reply_text(
-        USERBOT_REPO,
-        disable_web_page_preview=True,
-        quote=False
-    )
-    await m.delete()
 
 
 # - Other functions
