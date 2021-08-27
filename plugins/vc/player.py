@@ -1,5 +1,5 @@
 """
-tgvc-userbot, Telegram Voice Chat Userbot
+tgvc-userbot, Telegram Voice Chat Uzarbot
 Copyright (C) 2021  Dash Eclipse
 
 This program is free software: you can redistribute it and/or modify
