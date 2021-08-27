@@ -376,7 +376,7 @@ async def leave_voice_chat(client, m: Message):
     try:
         await client.update_profile(first_name=f"{DEFAULT_NAME}")
     except Exception as e:
-        logging.info(f"{e}")
+        print(e)
     await group_call.stop()
     await m.delete()
 
