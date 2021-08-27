@@ -46,6 +46,8 @@ from pytgcalls import GroupCall
 DELETE_DELAY = 8
 DURATION_AUTOPLAY_MIN = 10
 DURATION_PLAY_HOUR = 3
+DEFAULT_NAME = os.getenv("DEFAULT_NAME", "Music Player 🎵")
+
 
 USERBOT_HELP = f"""{emoji.LABEL}  **Common Commands**:
 __available to group members of current voice chat__
@@ -219,6 +221,7 @@ async def play_track(client, m: Message):
         )
         await mp.update_start_time()
         await m_status.delete()
+        await client.update_profile(first_name=f"{playlist[0].audio.title}")
         print(f"- START PLAYING: {playlist[0].audio.title}")
     await mp.send_playlist()
     for track in playlist[:2]:
@@ -284,6 +287,7 @@ async def dest_track(client, m: Message):
             )
             await mp.update_start_time()
             await e3.delete()
+            await client.update_profile(first_name=f"{playlist[0].audio.title}")
             print(f"- START PLAYING: {playlist[0].audio.title}")
     for track in playlist[:2]:
         await download_audio(track)
@@ -366,10 +370,11 @@ async def join_group_call(client, m: Message):
                    & self_or_contact_filter
                    & current_vc
                    & filters.regex("^!leave$"))
-async def leave_voice_chat(_, m: Message):
+async def leave_voice_chat(client, m: Message):
     group_call = mp.group_call
     mp.playlist.clear()
     group_call.input_filename = ''
+    await client.update_profile(first_name=f"{DEFAULT_NAME}")
     await group_call.stop()
     await m.delete()
 
@@ -539,6 +544,7 @@ async def skip_current_playing():
     await mp.update_start_time()
     # remove old track from playlist
     old_track = playlist.pop(0)
+    await client.update_profile(first_name=f"{playlist[0].audio.title}")
     print(f"- START PLAYING: {playlist[0].audio.title}")
     await mp.send_playlist()
     os.remove(os.path.join(
