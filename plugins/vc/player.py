@@ -370,7 +370,7 @@ async def join_group_call(client, m: Message):
                    & self_or_contact_filter
                    & current_vc
                    & filters.regex("^!leave$"))
-async def leave_voice_chat(_, m: Message):
+async def leave_voice_chat(client, m: Message):
     group_call = mp.group_call
     mp.playlist.clear()
     group_call.input_filename = ''
