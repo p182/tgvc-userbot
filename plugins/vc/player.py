@@ -48,7 +48,6 @@ DURATION_AUTOPLAY_MIN = 10
 DURATION_PLAY_HOUR = 3
 DEFAULT_NAME = os.getenv("DEFAULT_NAME", "Music Player 🎵")
 
-
 USERBOT_HELP = f"""{emoji.LABEL}  **Common Commands**:
 __available to group members of current voice chat__
 __starts with / (slash) or ! (exclamation mark)__
@@ -374,7 +373,10 @@ async def leave_voice_chat(client, m: Message):
     group_call = mp.group_call
     mp.playlist.clear()
     group_call.input_filename = ''
-    await client.update_profile(first_name=f"{DEFAULT_NAME}")
+    try:
+        await client.update_profile(first_name=f"{DEFAULT_NAME}")
+    except Exception as e:
+        print(e)
     await group_call.stop()
     await m.delete()
 
