@@ -18,6 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 !ping reply with pong
 !uptime check uptime
 """
+import os
+import asyncio
+import signal
+
 from datetime import datetime
 from time import time
 
@@ -52,6 +56,9 @@ async def _human_time_duration(seconds):
                          .format(amount, unit, "" if amount == 1 else "s"))
     return ', '.join(parts)
 
+async def restart():
+    os.kill(os.getpid(), signal.SIGUSR1)
+
 
 @Client.on_message(filters.text
                    & self_or_contact_filter
@@ -83,3 +90,14 @@ async def get_uptime(_, m: Message):
         f"- uptime: `{uptime}`\n"
         f"- start time: `{START_TIME_ISO}`"
     )
+
+
+@Client.on_message(self_or_contact_filter
+                   & filters.regex("^!restart$"))
+async def bot_restart(client, m: Message):
+    umm = await m.reply_text("`Restarting...`")
+    try:
+        asyncio.get_event_loop().create_task(restart())
+    except Exception as e:
+        await umm.edit(f"**An Error Occurred :-** \n\n`{e}`")
+        return
