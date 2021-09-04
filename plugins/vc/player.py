@@ -403,12 +403,16 @@ async def list_voice_chat(client, m: Message):
                    & self_or_contact_filter
                    & current_vc
                    & filters.regex("^!stop$"))
-async def stop_playing(_, m: Message):
+async def stop_playing(client, m: Message):
     group_call = mp.group_call
     group_call.stop_playout()
     reply = await m.reply_text(f"{emoji.STOP_BUTTON} stopped playing")
     await mp.update_start_time(reset=True)
     mp.playlist.clear()
+    try:
+        await client.update_profile(first_name=f"{DEFAULT_NAME}")
+    except Exception as e:
+        print(e)
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
