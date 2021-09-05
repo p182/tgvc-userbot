@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO,
                     ])
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 logging.getLogger("pyrogram.dispatcher").setLevel(logging.INFO)
-
+logging.getLogger("pytgcalls").setLevel(logging.INFO)
 
 @Client.on_message(self_or_contact_filter & filters.command('logs', prefixes='!'))
 async def logzzz(client, m: Message):
