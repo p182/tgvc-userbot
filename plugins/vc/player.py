@@ -152,9 +152,9 @@ mp = MusicPlayer()
 async def network_status_changed_handler(gc: GroupCall, is_connected: bool):
     if is_connected:
         mp.chat_id = int("-100" + str(gc.full_chat.id))
-        await send_text(f"{emoji.CHECK_MARK_BUTTON} joined the voice chat")
+        await send_text(f"{emoji.CHECK_MARK_BUTTON} приєднався до голосової бесіди")
     else:
-        await send_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat")
+        await send_text(f"{emoji.CROSS_MARK_BUTTON} покинув голосову бесіду")
         mp.chat_id = None
 
 
@@ -185,7 +185,7 @@ async def play_track(client, m: Message):
             )
             await _delay_delete_messages((reply,), DELETE_DELAY)
             return
-        if m.audio.filename == "record.ogg":
+        if m.audio.file_name == "record.ogg":
             reply = await m.reply_text(
                 f"{emoji.ROBOT} файли записів голосового чату або инші з назвою record.ogg "
                 "не додаються списку відтворення автоматично "
