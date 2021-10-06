@@ -130,7 +130,7 @@ class MusicPlayer(object):
             pl = f"{emoji.NO_ENTRY} empty playlist"
         else:
             if len(playlist) == 1:
-                pl = f"{emoji.REPEAT_SINGLE_BUTTON} **Список відтворення**:\n"
+                pl = f"{emoji.PLAY_BUTTON} **Список відтворення**:\n"
             else:
                 pl = f"{emoji.PLAY_BUTTON} **Список відтворення**:\n"
             pl += "\n".join([
