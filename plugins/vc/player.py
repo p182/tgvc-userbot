@@ -282,7 +282,7 @@ async def dest_track(client, m: Message):
         playlist.append(gana)
         if len(playlist) == 1:
             m_status = await m.reply_text(
-                f"{emoji.PLAY_BUTTON} **Playing** __the Last__ **{limit_}** __Songs from__ {chat_}"
+                f"{emoji.PLAY_BUTTON} **Програвання** __останніх__ **{limit_}** __пісень з__ {chat_}"
             )
             await download_audio(playlist[0])
             group_call.input_filename = os.path.join(
@@ -352,7 +352,7 @@ async def skip_track(_, m: Message):
             )
             await mp.send_playlist()
         except (ValueError, TypeError):
-            reply = await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
+            reply = await m.reply_text(f"{emoji.NO_ENTRY} неправильний ввід",
                                        disable_web_page_preview=True)
         await _delay_delete_messages((reply, m), DELETE_DELAY)
 
@@ -474,7 +474,7 @@ async def clean_raw_pcm(client, m: Message):
             if fn.endswith(".raw"):
                 count += 1
                 os.remove(os.path.join(download_dir, fn))
-    reply = await m.reply_text(f"{emoji.WASTEBASKET} cleaned {count} files")
+    reply = await m.reply_text(f"{emoji.WASTEBASKET} очищено {count} тимчасових файлів")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
