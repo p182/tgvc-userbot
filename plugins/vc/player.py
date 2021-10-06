@@ -536,7 +536,7 @@ async def skip_current_playing():
     if not playlist:
         return
     if len(playlist) == 1:
-        await mp.update_start_time()
+        #await mp.update_start_time()
         return
     client = group_call.client
     download_dir = os.path.join(client.workdir, DEFAULT_DOWNLOAD_DIR)
