@@ -15,8 +15,6 @@ along with this userbot.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/me-piro-786/tgvc-userbot/tree/dev)
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https%3A%2F%2Fgithub.com%2Fme-piro-786%2Ftgvc-userbot&envs=API_ID%2CAPI_HASH%2CSESSION_NAME%2CPLUGIN&API_IDDesc=my.telegram.org&API_HASHDesc=my.telegram.org&SESSION_NAMEDesc=Pyrogram+String+Session&PLUGINDefault=player)
-
 ## Introduction
 
 **Features**
