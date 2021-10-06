@@ -179,12 +179,20 @@ async def play_track(client, m: Message):
     if m.audio:
         if m.audio.duration > (DURATION_AUTOPLAY_MIN * 60):
             reply = await m.reply_text(
-                f"{emoji.ROBOT} audio which duration longer than "
-                f"{str(DURATION_AUTOPLAY_MIN)} min won't be automatically "
-                "added to playlist"
+                f"{emoji.ROBOT} файли тривалістю більше, аніж "
+                f"{str(DURATION_AUTOPLAY_MIN)} хвилин не додаються списку відтворення автоматично "
+                "\n використовуйте команду !play у відповідь на файл для примусового додання до списку відтворення"
             )
             await _delay_delete_messages((reply,), DELETE_DELAY)
             return
+        if m.audio.filename == "record.ogg":
+            reply = await m.reply_text(
+                f"{emoji.ROBOT} файли записів голосового чату або инші з назвою record.ogg "
+                "не додаються списку відтворення автоматично "
+                "\n використовуйте команду !play у відповідь на файл для примусового додання до списку відтворення"
+            )
+            await _delay_delete_messages((reply,), DELETE_DELAY)
+            return  
         m_audio = m
     elif m.reply_to_message and m.reply_to_message.audio:
         m_audio = m.reply_to_message
@@ -202,14 +210,14 @@ async def play_track(client, m: Message):
     # check already added
     if playlist and playlist[-1].audio.file_unique_id \
             == m_audio.audio.file_unique_id:
-        reply = await m.reply_text(f"{emoji.ROBOT} already added")
+        reply = await m.reply_text(f"{emoji.ROBOT} вже додано до списку відтворення")
         await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     # add to playlist
     playlist.append(m_audio)
     if len(playlist) == 1:
         m_status = await m.reply_text(
-            f"{emoji.INBOX_TRAY} downloading and transcoding..."
+            f"{emoji.INBOX_TRAY} завантаження та перетворення для програвання у ГЧ..."
         )
         await download_audio(playlist[0])
         group_call.input_filename = os.path.join(
@@ -235,7 +243,7 @@ async def play_track(client, m: Message):
 async def dest_track(client, m: Message):
     group_call = mp.group_call
     playlist = mp.playlist
-    e3 = await m.reply_text("`Processing ...`")
+    e3 = await m.reply_text("`Обробка ...`")
 
     # iter audio
     try:
@@ -296,7 +304,7 @@ async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
     if not start_time:
-        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} unknown")
+        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} невідомо")
         await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     utcnow = datetime.utcnow().replace(microsecond=0)
@@ -356,7 +364,7 @@ async def join_group_call(client, m: Message):
     group_call = mp.group_call
     group_call.client = client
     if group_call.is_connected:
-        await m.reply_text(f"{emoji.ROBOT} already joined a voice chat")
+        await m.reply_text(f"{emoji.ROBOT} вже у голосовій бесіді")
         return
     await group_call.start(m.chat.id)
     await m.delete()
@@ -383,12 +391,12 @@ async def list_voice_chat(client, m: Message):
         chat_id = int("-100" + str(group_call.full_chat.id))
         chat = await client.get_chat(chat_id)
         reply = await m.reply_text(
-            f"{emoji.MUSICAL_NOTES} **currently in the voice chat**:\n"
+            f"{emoji.MUSICAL_NOTES} **зараз у голосовій бесіді**:\n"
             f"- **{chat.title}**"
         )
     else:
         reply = await m.reply_text(emoji.NO_ENTRY
-                                   + "didn't join any voice chat yet")
+                                   + "наразі не приєднався до жодної з бесід")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
@@ -399,7 +407,7 @@ async def list_voice_chat(client, m: Message):
 async def stop_playing(_, m: Message):
     group_call = mp.group_call
     group_call.stop_playout()
-    reply = await m.reply_text(f"{emoji.STOP_BUTTON} stopped playing")
+    reply = await m.reply_text(f"{emoji.STOP_BUTTON} відтворення зупинено")
     await mp.update_start_time(reset=True)
     mp.playlist.clear()
     await _delay_delete_messages((reply, m), DELETE_DELAY)
@@ -417,7 +425,7 @@ async def restart_playing(_, m: Message):
     await mp.update_start_time()
     reply = await m.reply_text(
         f"{emoji.COUNTERCLOCKWISE_ARROWS_BUTTON}  "
-        "playing from the beginning..."
+        "відтворення з початку..."
     )
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
@@ -429,7 +437,7 @@ async def restart_playing(_, m: Message):
 async def pause_playing(_, m: Message):
     mp.group_call.pause_playout()
     await mp.update_start_time(reset=True)
-    reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} paused",
+    reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} призупинено",
                                quote=False)
     mp.msg['pause'] = reply
     await m.delete()
@@ -441,7 +449,7 @@ async def pause_playing(_, m: Message):
                    & filters.regex("^!resume"))
 async def resume_playing(_, m: Message):
     mp.group_call.resume_playout()
-    reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} resumed",
+    reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} продовжено",
                                quote=False)
     if mp.msg.get('pause') is not None:
         await mp.msg['pause'].delete()
@@ -477,7 +485,7 @@ async def clean_raw_pcm(client, m: Message):
 async def mute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(True)
-    reply = await m.reply_text(f"{emoji.MUTED_SPEAKER} muted")
+    reply = await m.reply_text(f"{emoji.MUTED_SPEAKER} заглушено")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
