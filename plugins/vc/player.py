@@ -130,9 +130,9 @@ class MusicPlayer(object):
             pl = f"{emoji.NO_ENTRY} empty playlist"
         else:
             if len(playlist) == 1:
-                pl = f"{emoji.REPEAT_SINGLE_BUTTON} **Playlist**:\n"
+                pl = f"{emoji.REPEAT_SINGLE_BUTTON} **Список відтворення**:\n"
             else:
-                pl = f"{emoji.PLAY_BUTTON} **Playlist**:\n"
+                pl = f"{emoji.PLAY_BUTTON} **Список відтворення**:\n"
             pl += "\n".join([
                 f"**{i}**. **[{x.audio.title}]({x.link})**"
                 for i, x in enumerate(playlist)
@@ -198,8 +198,8 @@ async def play_track(client, m: Message):
         m_audio = m.reply_to_message
         if m_audio.audio.duration > (DURATION_PLAY_HOUR * 60 * 60):
             reply = await m.reply_text(
-                f"{emoji.ROBOT} audio which duration longer than "
-                f"{str(DURATION_PLAY_HOUR)} hours won't be added to playlist"
+                f"{emoji.ROBOT} файли тривалістю більше, аніж "
+                f"{str(DURATION_PLAY_HOUR)} годин заборонено додавати до списку відтворення"
             )
             await _delay_delete_messages((reply,), DELETE_DELAY)
             return
@@ -249,7 +249,7 @@ async def dest_track(client, m: Message):
     try:
         args_ = m.text.split(maxsplit=1)[1]
     except Exception as fx:
-        await m.reply_text(f"**Input Error:** \n{fx}")
+        await m.reply_text(f"**Помилка вводу:** \n{fx}")
         return
     
     if ";" in args_:
@@ -264,7 +264,7 @@ async def dest_track(client, m: Message):
     try:
         chat_ = await Client.get_chat(args_)
     except Exception as fx:
-        await m.reply_text(f"**Couldn't find Channel!** \n{fx}")
+        await m.reply_text(f"**Неможливо знайти канал!** \n{fx}")
         return
     """
     chat_ = args.strip()
@@ -496,7 +496,7 @@ async def mute(_, m: Message):
 async def unmute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(False)
-    reply = await m.reply_text(f"{emoji.SPEAKER_MEDIUM_VOLUME} unmuted")
+    reply = await m.reply_text(f"{emoji.SPEAKER_MEDIUM_VOLUME} звук повернено")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
