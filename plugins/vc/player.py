@@ -536,6 +536,11 @@ async def skip_current_playing():
     if not playlist:
         return
     if len(playlist) == 1:
+        group_call = mp.group_call
+        group_call.stop_playout()
+        await send_text(f"{emoji.STOP_BUTTON} відтворення зупинено")
+        await mp.update_start_time(reset=True)
+        mp.playlist.clear()
         #await mp.update_start_time()
         return
     client = group_call.client
