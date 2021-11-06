@@ -127,7 +127,7 @@ class MusicPlayer(object):
     async def send_playlist(self):
         playlist = self.playlist
         if not playlist:
-            pl = f"{emoji.NO_ENTRY} empty playlist"
+            pl = f"{emoji.NO_ENTRY} нема пісень для відтворення, надішліть новий аудіофайл, або надішліть команду !play у відповідь на існуючий"
         else:
             if len(playlist) == 1:
                 pl = f"{emoji.PLAY_BUTTON} **Список відтворення**:\n"
