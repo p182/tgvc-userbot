@@ -170,7 +170,7 @@ async def playout_ended_handler(_, __):
     filters.group
     & ~filters.edited
     & current_vc
-    & (filters.regex("^(\\/|!)play$") | filters.audio)
+    & (filters.regex("^(\\/|!|(!\s))play$") | filters.audio)
 )
 async def play_track(client, m: Message):
     group_call = mp.group_call
@@ -217,7 +217,7 @@ async def play_track(client, m: Message):
     playlist.append(m_audio)
     if len(playlist) == 1:
         m_status = await m.reply_text(
-            f"{emoji.INBOX_TRAY} завантаження та перетворення для програвання у ГЧ..."
+            f"{emoji.INBOX_TRAY} завантаження та перетворення для програвання голосовій бесіді..."
         )
         await download_audio(playlist[0])
         group_call.input_filename = os.path.join(
@@ -238,7 +238,7 @@ async def play_track(client, m: Message):
     filters.group
     & ~filters.edited
     & current_vc
-    & (filters.regex("^(\\/|!)playfrom"))
+    & (filters.regex("^(\\/|!|(!\s))playfrom"))
 )
 async def dest_track(client, m: Message):
     group_call = mp.group_call
@@ -299,7 +299,7 @@ async def dest_track(client, m: Message):
 
 @Client.on_message(main_filter
                    & current_vc
-                   & filters.regex("^(\\/|!)current$"))
+                   & filters.regex("^(\\/|!|(!\s))current$"))
 async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
@@ -320,7 +320,7 @@ async def show_current_playing_time(_, m: Message):
 
 @Client.on_message(main_filter
                    & (self_or_contact_filter | current_vc)
-                   & filters.regex("^(\\/|!)help$"))
+                   & filters.regex("^(\\/|!|(!\s))help$"))
 async def show_help(_, m: Message):
     await m.reply_text(f'[Click Here for Help!](https://telegra.ph/TGVC-UserBot-Help-08-17)', disable_web_page_preview=True)
 
@@ -328,7 +328,7 @@ async def show_help(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.command("skip", prefixes="!"))
+                   & filters.command("skip", prefixes=["!", "! "]))
 async def skip_track(_, m: Message):
     playlist = mp.playlist
     if len(m.command) == 1:
@@ -359,7 +359,7 @@ async def skip_track(_, m: Message):
 
 @Client.on_message(main_filter
                    & self_or_contact_filter
-                   & filters.regex("^!join$"))
+                   & filters.regex("^(\\/|!|(!\s))join$"))
 async def join_group_call(client, m: Message):
     group_call = mp.group_call
     group_call.client = client
@@ -373,7 +373,7 @@ async def join_group_call(client, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!leave$"))
+                   & filters.regex("^(\\/|!|(!\s))leave$"))
 async def leave_voice_chat(_, m: Message):
     group_call = mp.group_call
     mp.playlist.clear()
@@ -384,7 +384,7 @@ async def leave_voice_chat(_, m: Message):
 
 @Client.on_message(main_filter
                    & self_or_contact_filter
-                   & filters.regex("^!vc$"))
+                   & filters.regex("^(\\/|!|(!\s))vc$"))
 async def list_voice_chat(client, m: Message):
     group_call = mp.group_call
     if group_call.is_connected:
@@ -403,7 +403,7 @@ async def list_voice_chat(client, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!stop$"))
+                   & filters.regex("^(\\/|!|(!\s))stop$"))
 async def stop_playing(_, m: Message):
     group_call = mp.group_call
     group_call.stop_playout()
@@ -416,7 +416,7 @@ async def stop_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!replay$"))
+                   & filters.regex("^(\\/|!|(!\s))replay$"))
 async def restart_playing(_, m: Message):
     group_call = mp.group_call
     if not mp.playlist:
@@ -433,7 +433,7 @@ async def restart_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!pause"))
+                   & filters.regex("^(\\/|!|(!\s))pause"))
 async def pause_playing(_, m: Message):
     mp.group_call.pause_playout()
     await mp.update_start_time(reset=True)
@@ -446,7 +446,7 @@ async def pause_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!resume"))
+                   & filters.regex("^(\\/|!|(!\s))resume"))
 async def resume_playing(_, m: Message):
     mp.group_call.resume_playout()
     reply = await m.reply_text(f"{emoji.PLAY_OR_PAUSE_BUTTON} продовжено",
@@ -460,7 +460,7 @@ async def resume_playing(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!clean$"))
+                   & filters.regex("^(\\/|!|(!\s))clean$"))
 async def clean_raw_pcm(client, m: Message):
     download_dir = os.path.join(client.workdir, DEFAULT_DOWNLOAD_DIR)
     all_fn: list[str] = os.listdir(download_dir)
@@ -481,7 +481,7 @@ async def clean_raw_pcm(client, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!mute$"))
+                   & filters.regex("^(\\/|!|(!\s))mute$"))
 async def mute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(True)
@@ -492,7 +492,7 @@ async def mute(_, m: Message):
 @Client.on_message(main_filter
                    & self_or_contact_filter
                    & current_vc
-                   & filters.regex("^!unmute$"))
+                   & filters.regex("^(\\/|!|(!\s))unmute$"))
 async def unmute(_, m: Message):
     group_call = mp.group_call
     group_call.set_is_mute(False)
